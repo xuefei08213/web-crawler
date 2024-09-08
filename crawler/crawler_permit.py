@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import translate
+from util import translate
 from mdutils import MdUtils
 
 prefix_url = "https://www.permit.io/"
