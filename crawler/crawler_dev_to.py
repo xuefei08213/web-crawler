@@ -1,7 +1,9 @@
 import requests
+import bs4.element
 from bs4 import BeautifulSoup
 from util import translate
 from mdutils import MdUtils
+
 
 def crawler_dev_to(url):
     prefix_url = "https://www.permit.io/"
@@ -60,9 +62,24 @@ def crawler_dev_to(url):
             completeString = ""
             # p中包含加粗的信息，因此要通过列表来拼接全部内容
             for content in contentsInPTag:
-                completeString = completeString + content.string
+                # print(type(content))
+                if isinstance(content, bs4.element.Tag):
+                    print(content.name)
+                    if isinstance(content.next, bs4.element.NavigableString):
+                        completeString = completeString + content.next.string
+                    elif isinstance(content.next, bs4.element.Tag) and content.next.name == "img":
+                        src = content.next.attrs.get("src")
+                        if not src.startswith("http") and not src.startswith("https"):
+                            src = prefix_url + src
+                        markdownImageStr = mdFile.new_inline_image("", src)
+                        mdFile.new_line(markdownImageStr)
+                    # if content.name == "a":
+                    #     completeString = completeString + content.string
+                else:
+                    completeString = completeString + content.string
             mdFile.new_paragraph(completeString)
             translatedCompleteString = translate.translate(completeString)
+            # translatedCompleteString = completeString
             print(translatedCompleteString)
             mdFile.new_paragraph(translatedCompleteString)
             # print(completeString)
