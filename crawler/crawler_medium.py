@@ -6,10 +6,6 @@ from selenium import webdriver
 
 from mdutils import MdUtils
 
-md_file = MdUtils(file_name="tmp")
-
-
-
 def crawler_medium(url):
     options = webdriver.ChromeOptions()
     options.debugger_address = '127.0.0.1:9222'
@@ -26,17 +22,22 @@ def crawler_medium(url):
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
+    title = str(soup.h1.string)
+    if not os.path.exists(title):
+        os.makedirs(title)
+    md_file = MdUtils(file_name=title)
+
     article = soup.find("article")
     section = article.find("section")
 
     content_divs = section.find_all("div", class_="fj fk fl fm fn")
     for content_div in content_divs:
         print(content_div.get("class"))
-        extract(content_div)
+        extract(content_div,md_file)
     md_file.create_md_file()
 
 
-def extract(div):
+def extract(div,md_file):
     children = div.children
     for child in children:
         if child.name == "div":
@@ -46,12 +47,10 @@ def extract(div):
                 class_str = " ".join(class_arr)
             if class_str != "speechify-ignore ab cp":
                 print(child.get("class"))
-                extract(child)
+                extract(child,md_file)
         if child.name == "h1" or child.name == "h2" or child.name == "h3" or child.name == "h4":
             title = child.string.strip()
             if child.name == "h1":
-                if not os.path.exists(title):
-                    os.makedirs(title)
                 md_file.new_header(level=1, title=title)
             if child.name == "h2":
                 md_file.new_header(level=2, title=title)
