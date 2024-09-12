@@ -4,7 +4,7 @@ import os
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
-from util import translate
+from util import aitools
 
 from mdutils import MdUtils
 
@@ -50,7 +50,7 @@ def extract(div,md_file):
                 extract(child,md_file)
         if child.name == "h1" or child.name == "h2" or child.name == "h3" or child.name == "h4":
             title = child.string.strip()
-            translated_title = translate.translate(title)
+            translated_title = aitools.translate(title)
             if child.name == "h1":
                 md_file.new_header(level=1, title=title)
                 md_file.new_header(level=1, title=translated_title)
@@ -72,7 +72,7 @@ def extract(div,md_file):
             md_file.new_line(markdownImageStr)
         if child.name == "p":
             phrase = child.text.strip()
-            translated_phrase = translate.translate(phrase)
+            translated_phrase = aitools.translate(phrase)
             md_file.new_paragraph(phrase)
             md_file.new_paragraph(translated_phrase)
         if child.name == "ul":
@@ -80,7 +80,7 @@ def extract(div,md_file):
             li_text_arr = []
             for li in lis:
                 li_text = li.text.strip()
-                translated_li_text = translate.translate(li_text)
+                translated_li_text = aitools.translate(li_text)
                 li_text_arr.append(li_text)
                 li_text_arr.append(translated_li_text)
             md_file.new_list(li_text_arr)

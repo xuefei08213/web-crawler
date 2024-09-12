@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from util import translate
+from util import aitools
 from mdutils import MdUtils
 
 prefix_url = "https://www.permit.io/"
@@ -14,7 +14,7 @@ article = soup.article
 print(article.h1.string)
 h1 = article.h1.string
 mdFile = MdUtils(file_name=h1, title=h1)
-translatedH1String = translate.translate(h1)
+translatedH1String = aitools.translate(h1)
 mdFile.new_header(level=1, title=translatedH1String)
 
 container = article.find_all("div", class_="container")[1]
@@ -31,7 +31,7 @@ for child in children:
     if tagName == "h2":
         h2String = child.string
         mdFile.new_header(level=2, title=h2String)
-        translatedH2String = translate.translate(h2String)
+        translatedH2String = aitools.translate(h2String)
         mdFile.new_header(level=2, title=translatedH2String)
         print(translatedH2String, end='\n')
     if tagName == "p":
@@ -41,7 +41,7 @@ for child in children:
         for content in contentsInPTag:
             completeString = completeString + content.string
         mdFile.new_paragraph(completeString)
-        translatedCompleteString = translate.translate(completeString)
+        translatedCompleteString = aitools.translate(completeString)
         mdFile.new_paragraph(translatedCompleteString)
         print(completeString)
     if tagName == "img":
@@ -61,7 +61,7 @@ for child in children:
             for textString in textStrings:
                 completeString = completeString + textString
             mdFile.new_paragraph(completeString)
-            translatedCompleteString = translate.translate(completeString)
+            translatedCompleteString = aitools.translate(completeString)
             mdFile.new_paragraph(translatedCompleteString)
             print(completeString)
 

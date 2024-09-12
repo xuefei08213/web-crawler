@@ -1,7 +1,7 @@
 import requests
 import bs4.element
 from bs4 import BeautifulSoup
-from util import translate
+from util import aitools
 from mdutils import MdUtils
 
 
@@ -49,7 +49,7 @@ def crawler_dev_to(url):
             # p中包含加粗的信息，因此要通过列表来拼接全部内容
             for content in contentsInHTag:
                 completeString = completeString + content.string.strip()
-                translatedHString = translate.translate(completeString)
+                translatedHString = aitools.translate(completeString)
                 print(translatedHString)
             if (tagName == "h2"):
                 mdFile.new_header(level=2, title=completeString)
@@ -78,7 +78,7 @@ def crawler_dev_to(url):
                 else:
                     completeString = completeString + content.string
             mdFile.new_paragraph(completeString)
-            translatedCompleteString = translate.translate(completeString)
+            translatedCompleteString = aitools.translate(completeString)
             # translatedCompleteString = completeString
             print(translatedCompleteString)
             mdFile.new_paragraph(translatedCompleteString)
@@ -93,7 +93,7 @@ def crawler_dev_to(url):
             for string in child.stripped_strings:
                 stringEscape = string.replace("-", "`-`")
                 mdFile.new_line(">" + stringEscape)
-                translatedStringEscape = translate.translate(stringEscape)
+                translatedStringEscape = aitools.translate(stringEscape)
                 print(translatedStringEscape)
                 mdFile.new_line(">" + translatedStringEscape)
     mdFile.create_md_file()
