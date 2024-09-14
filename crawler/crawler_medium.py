@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 from util import aitools
-
 from mdutils import MdUtils
 
 def crawler_medium(url):
@@ -36,6 +35,8 @@ def crawler_medium(url):
     for content_div in content_divs:
         extract(content_div,md_file)
     md_file.create_md_file()
+
+
 
 
 def extract(div,md_file):
