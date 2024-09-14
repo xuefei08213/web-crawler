@@ -2,6 +2,7 @@ from flask import Flask, request
 
 from crawler.crawler_dev_to import crawler_dev_to
 from crawler.crawler_medium import crawler_medium
+from crawler.crawler_common import crawler_common
 
 app = Flask(__name__)
 
@@ -12,6 +13,12 @@ def dev_to():
     crawler_dev_to(url)
     return "success"
 
+@app.route('/crawler/common',methods=['POST'])
+def common():
+    data = request.get_json()
+    url = data['url']
+    crawler_common(url)
+    return "success"
 
 @app.route('/crawler/medium',methods=['POST'])
 def medium():
