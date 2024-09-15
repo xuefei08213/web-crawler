@@ -4,12 +4,33 @@ import requests
 from bs4 import BeautifulSoup
 from mdutils import MdUtils
 
+from selenium import webdriver
+
+import time
+
 from util import aitools
 
 
-def crawler_common(url):
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
+def crawler_common(url,chromedebugmode=False):
+
+    if chromedebugmode:
+        options = webdriver.ChromeOptions()
+        options.debugger_address = '127.0.0.1:9222'
+        driver = webdriver.Chrome(options=options)
+        driver.get(url)
+
+        time.sleep(5)
+
+        # 1、获取所有标签页
+        window_handles = driver.window_handles
+        driver.switch_to.window(window_handles[0])
+
+        time.sleep(5)
+
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+    else:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, "html.parser")
 
     h1 = soup.h1.string.strip()
     md_file = MdUtils(file_name=h1, title=h1)
@@ -27,7 +48,7 @@ def crawler_common(url):
 def extract(div, md_file):
     children = div.children
     for child in children:
-        if child.name == "div":
+        if child.name == "div" or child.name == "section":
             extract(child, md_file)
         if child.name == "h1" or child.name == "h2" or child.name == "h3" or child.name == "h4":
             title = child.text.strip()
@@ -45,10 +66,14 @@ def extract(div, md_file):
                 md_file.new_header(level=4, title=title)
                 md_file.new_header(level=4, title=translated_title)
             print(child.text.strip())
-        if child.name == "figure":
+        if child.name == "figure" :
             img = child.find("img")
             img_src = img.get("src")
 
+            markdownImageStr = md_file.new_inline_image("", img_src)
+            md_file.new_line(markdownImageStr)
+        if child.name == "img":
+            img_src = child.get("src")
             markdownImageStr = md_file.new_inline_image("", img_src)
             md_file.new_line(markdownImageStr)
         if child.name == "p":
