@@ -1,5 +1,5 @@
 import time
-import os
+import shutil
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -24,9 +24,9 @@ def crawler_medium(url):
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
     title = str(soup.h1.string)
-    if not os.path.exists(title):
-        os.makedirs(title)
-    md_file = MdUtils(file_name=title)
+    title = title.replace(":","-")
+    md_file = MdUtils(file_name=title, title=title)
+    md_file.new_line(url)
 
     article = soup.find("article")
     section = article.find("section")
@@ -34,9 +34,9 @@ def crawler_medium(url):
     content_divs = section.find_all("div", class_="fj fk fl fm fn")
     for content_div in content_divs:
         extract(content_div,md_file)
+
     md_file.create_md_file()
-
-
+    shutil.move(title + ".md", "posts")
 
 
 def extract(div,md_file):
@@ -68,7 +68,6 @@ def extract(div,md_file):
         if child.name == "figure":
             img = child.find("img")
             img_src = img.get("src")
-
             markdownImageStr = md_file.new_inline_image("", img_src)
             md_file.new_line(markdownImageStr)
         if child.name == "p":
@@ -85,3 +84,7 @@ def extract(div,md_file):
                 li_text_arr.append(li_text)
                 li_text_arr.append(translated_li_text)
             md_file.new_list(li_text_arr)
+        if child.name == "pre":
+            pre_inner_html = child.prettify()
+            code_info =  aitools.extract_code_from_pre(pre_inner_html)
+            md_file.new_paragraph(code_info)
