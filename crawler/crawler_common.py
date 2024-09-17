@@ -1,18 +1,15 @@
 import shutil
+import time
 
 import requests
 from bs4 import BeautifulSoup
 from mdutils import MdUtils
-
 from selenium import webdriver
-
-import time
 
 from util import aitools
 
 
-def crawler_common(url,chromedebugmode=False):
-
+def crawler_common(url, chromedebugmode=False):
     if chromedebugmode:
         options = webdriver.ChromeOptions()
         options.debugger_address = '127.0.0.1:9222'
@@ -66,7 +63,7 @@ def extract(div, md_file):
                 md_file.new_header(level=4, title=title)
                 md_file.new_header(level=4, title=translated_title)
             print(child.text.strip())
-        if child.name == "figure" :
+        if child.name == "figure":
             img = child.find("img")
             img_src = img.get("src")
 
