@@ -51,17 +51,17 @@ def extract(div, md_file):
             title = child.text.strip()
             translated_title = aitools.translate(title)
             if child.name == "h1":
-                md_file.new_header(level=1, title=title)
-                md_file.new_header(level=1, title=translated_title)
+                md_file.new_line("# {}".format(title))
+                md_file.new_line("# {}".format(translated_title))
             if child.name == "h2":
-                md_file.new_header(level=2, title=title)
-                md_file.new_header(level=2, title=translated_title)
+                md_file.new_line("## {}".format(title))
+                md_file.new_line("## {}".format(translated_title))
             if child.name == "h3":
-                md_file.new_header(level=3, title=title)
-                md_file.new_header(level=3, title=translated_title)
+                md_file.new_line("### {}".format(title))
+                md_file.new_line("### {}".format(translated_title))
             if child.name == "h4":
-                md_file.new_header(level=4, title=title)
-                md_file.new_header(level=4, title=translated_title)
+                md_file.new_line("#### {}".format(title))
+                md_file.new_line("#### {}".format(translated_title))
             print(child.text.strip())
         if child.name == "figure":
             img = child.find("img")
@@ -78,7 +78,7 @@ def extract(div, md_file):
             translated_phrase = aitools.translate(phrase)
             md_file.new_paragraph(phrase)
             md_file.new_paragraph(translated_phrase)
-        if child.name == "ul":
+        if child.name == "ul" or child.name == "ol":
             lis = child.find_all("li")
             li_text_arr = []
             for li in lis:
