@@ -3,6 +3,7 @@ import bs4.element
 from bs4 import BeautifulSoup
 from util import aitools
 from mdutils import MdUtils
+import shutil
 
 
 def crawler_dev_to(url):
@@ -15,8 +16,10 @@ def crawler_dev_to(url):
 
     article = soup.article
     h1 = article.h1.string.strip()
+    translatedh1 = aitools.translate(h1)
     mdFile = MdUtils(file_name=h1, title=h1)
     mdFile.new_header(level=1, title=h1)
+    mdFile.new_header(level=1,title=translatedh1)
 
     mdFile.new_line(url)
 
@@ -51,7 +54,7 @@ def crawler_dev_to(url):
                 completeString = completeString + content.string.strip()
                 translatedHString = aitools.translate(completeString)
                 print(translatedHString)
-            if (tagName == "h2"):
+            if (tagName == "h2" or tagName == "h3"):
                 mdFile.new_header(level=2, title=completeString)
                 mdFile.new_header(level=2, title=translatedHString)
             elif (tagName == "h3"):
@@ -97,3 +100,5 @@ def crawler_dev_to(url):
                 print(translatedStringEscape)
                 mdFile.new_line(">" + translatedStringEscape)
     mdFile.create_md_file()
+
+    shutil.move(h1 + ".md", "posts")
