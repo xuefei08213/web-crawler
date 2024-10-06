@@ -19,7 +19,7 @@ def crawler_dev_to(url):
     translatedh1 = aitools.translate(h1)
     mdFile = MdUtils(file_name=h1, title=h1)
     mdFile.new_header(level=1, title=h1)
-    mdFile.new_header(level=1,title=translatedh1)
+    mdFile.new_header(level=1, title=translatedh1)
 
     mdFile.new_line(url)
 
@@ -54,12 +54,12 @@ def crawler_dev_to(url):
                 completeString = completeString + content.string.strip()
                 translatedHString = aitools.translate(completeString)
                 print(translatedHString)
-            if (tagName == "h2" or tagName == "h3"):
-                mdFile.new_header(level=2, title=completeString)
-                mdFile.new_header(level=2, title=translatedHString)
+            if (tagName == "h2"):
+                mdFile.new_line("## {}".format(completeString))
+                mdFile.new_line("## {}".format(translatedHString))
             elif (tagName == "h3"):
-                mdFile.new_header(level=3, title=completeString)
-                mdFile.new_header(level=3, title=translatedHString)
+                mdFile.new_line("### {}".format(completeString))
+                mdFile.new_line("### {}".format(translatedHString))
         if tagName == "p":
             contentsInPTag = child.children
             completeString = ""
@@ -99,6 +99,23 @@ def crawler_dev_to(url):
                 translatedStringEscape = aitools.translate(stringEscape)
                 print(translatedStringEscape)
                 mdFile.new_line(">" + translatedStringEscape)
+        if tagName == "div":
+            classname = ' '.join(child.get("class", [])).strip()
+            if classname == "highlight js-code-highlight":
+                pre_inner_html = child.prettify()
+                code_info = aitools.extract_code_from_pre(pre_inner_html)
+                mdFile.new_paragraph(code_info)
+        if tagName == "ul":
+            lis = child.find_all("li")
+            li_text_arr = []
+            for li in lis:
+                li_text = li.text.strip()
+                translated_li_text = aitools.translate(li_text)
+                li_text_arr.append(li_text)
+                li_text_arr.append(translated_li_text)
+            mdFile.new_line()
+            mdFile.new_list(li_text_arr)
+
     mdFile.create_md_file()
 
     shutil.move(h1 + ".md", "posts")
