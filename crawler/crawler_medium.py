@@ -83,6 +83,7 @@ def extract(div,md_file):
                 translated_li_text = aitools.translate(li_text)
                 li_text_arr.append(li_text)
                 li_text_arr.append(translated_li_text)
+            md_file.new_line("")
             md_file.new_list(li_text_arr)
         if child.name == "pre":
             pre_inner_html = child.prettify()
