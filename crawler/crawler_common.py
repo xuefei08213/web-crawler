@@ -9,7 +9,7 @@ from selenium import webdriver
 from util import aitools
 
 
-def crawler_common(url, chromedebugmode=False):
+def crawler_common(url,articleTag, chromedebugmode=False):
     if chromedebugmode:
         options = webdriver.ChromeOptions()
         options.debugger_address = '127.0.0.1:9222'
@@ -32,9 +32,11 @@ def crawler_common(url, chromedebugmode=False):
     h1 = soup.h1.string.strip()
     md_file = MdUtils(file_name=h1, title=h1)
     md_file.new_header(level=1, title=h1)
+    md_file.new_header(level=1, title=aitools.translate(h1))
     md_file.new_line(url)
 
-    article = soup.article
+    # article = soup.article
+    article = soup.find(articleTag)
     extract(article, md_file)
 
     md_file.create_md_file()
@@ -65,10 +67,11 @@ def extract(div, md_file):
             print(child.text.strip())
         if child.name == "figure":
             img = child.find("img")
-            img_src = img.get("src")
+            if img is not None:
+                img_src = img.get("src")
 
-            markdownImageStr = md_file.new_inline_image("", img_src)
-            md_file.new_line(markdownImageStr)
+                markdownImageStr = md_file.new_inline_image("", img_src)
+                md_file.new_line(markdownImageStr)
         if child.name == "img":
             img_src = child.get("src")
             markdownImageStr = md_file.new_inline_image("", img_src)

@@ -17,8 +17,9 @@ def dev_to():
 def common():
     data = request.get_json()
     url = data['url']
+    articleTag = data['articleTag']
     chrome_debug_mode = data['chrome_debug_mode']
-    crawler_common(url,chrome_debug_mode)
+    crawler_common(url,articleTag,chrome_debug_mode)
     return "success"
 
 @app.route('/crawler/medium',methods=['POST'])
