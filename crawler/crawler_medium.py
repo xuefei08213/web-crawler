@@ -25,6 +25,8 @@ def crawler_medium(url):
 
     title = str(soup.h1.string)
     title = title.replace(":","-")
+    title = title.replace("!", "")
+    title = title.replace("/","-")
     md_file = MdUtils(file_name=title, title=title)
     md_file.new_line(url)
 
