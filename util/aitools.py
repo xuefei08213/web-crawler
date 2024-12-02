@@ -20,7 +20,7 @@ def translate(text):
         你是一个翻译助手，将输入的段落从英文翻译为中文，并输出翻译后的中文结果。
         """
         translate_completion = client.chat.completions.create(
-            model="ep-20240819124512-f4mqn",
+            model=os.environ.get("MODEL_CASE_ID"),
             messages=[
                 {'role': 'system', 'content': translate_system_message},
                 {'role': 'user', 'content': f"{text}"},
@@ -42,7 +42,7 @@ def extract_code_from_pre(preinnerhtml):
         3、返回内容以markdown格式
         """
         extract_code_completion = client.chat.completions.create(
-            model="ep-20240819124512-f4mqn",
+            model=os.environ.get("MODEL_CASE_ID"),
             messages=[
                 {'role': 'system', 'content': extract_code_system_message},
                 {'role': 'user', 'content': f"{preinnerhtml}"},

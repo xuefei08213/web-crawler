@@ -34,6 +34,7 @@ def crawler_medium(url):
     section = article.find("section")
 
     content_divs = section.find_all("div", class_="fj fk fl fm fn")
+    # content_divs = section.find_all("div", class_="fk fl fm fn fo")
     for content_div in content_divs:
         extract(content_div,md_file)
 
@@ -52,7 +53,10 @@ def extract(div,md_file):
             if class_str != "speechify-ignore ab cp":
                 extract(child,md_file)
         if child.name == "h1" or child.name == "h2" or child.name == "h3" or child.name == "h4":
-            title = child.string.strip()
+            print(child.prettify())
+            title = child.string
+            title = title if title is not None else child.text
+            title = title.strip()
             translated_title = aitools.translate(title)
             if child.name == "h1":
                 md_file.new_header(level=1, title=title)
@@ -66,7 +70,7 @@ def extract(div,md_file):
             if child.name == "h4":
                 md_file.new_header(level=4, title=title)
                 md_file.new_header(level=4, title=translated_title)
-            print(child.string.strip())
+            print(title)
         if child.name == "figure":
             img = child.find("img")
             img_src = img.get("src")
@@ -77,7 +81,7 @@ def extract(div,md_file):
             translated_phrase = aitools.translate(phrase)
             md_file.new_paragraph(phrase)
             md_file.new_paragraph(translated_phrase)
-        if child.name == "ul":
+        if child.name == "ul" or child.name == "ol":
             lis = child.find_all("li")
             li_text_arr = []
             for li in lis:
@@ -91,3 +95,6 @@ def extract(div,md_file):
             pre_inner_html = child.prettify()
             code_info =  aitools.extract_code_from_pre(pre_inner_html)
             md_file.new_paragraph(code_info)
+        if child.name == "blockquote":
+            blockquote = child.text.strip()
+            md_file.new_line(">{}".format(blockquote))

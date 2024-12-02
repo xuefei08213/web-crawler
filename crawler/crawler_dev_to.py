@@ -37,7 +37,7 @@ def crawler_dev_to(url):
     for child in children:
         tagName = child.name
         # print(child.name)
-        if tagName == "h2" or tagName == "h3":
+        if tagName=="h1" or tagName == "h2" or tagName == "h3":
             """
             h2中的内容包括a标签和内容，如下
             <h2>
@@ -54,6 +54,9 @@ def crawler_dev_to(url):
                 completeString = completeString + content.string.strip()
                 translatedHString = aitools.translate(completeString)
                 print(translatedHString)
+            if (tagName == "h1"):
+                mdFile.new_line("# {}".format(completeString))
+                mdFile.new_line("# {}".format(translatedHString))
             if (tagName == "h2"):
                 mdFile.new_line("## {}".format(completeString))
                 mdFile.new_line("## {}".format(translatedHString))

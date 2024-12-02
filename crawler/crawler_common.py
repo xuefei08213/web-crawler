@@ -9,7 +9,7 @@ from selenium import webdriver
 from util import aitools
 
 
-def crawler_common(url,articleTag, chromedebugmode=False):
+def crawler_common(url, chromedebugmode=False,article_tag="",tag_type="tag"):
     if chromedebugmode:
         options = webdriver.ChromeOptions()
         options.debugger_address = '127.0.0.1:9222'
@@ -36,7 +36,18 @@ def crawler_common(url,articleTag, chromedebugmode=False):
     md_file.new_line(url)
 
     # article = soup.article
-    article = soup.find(articleTag)
+    article = None
+    if tag_type == "tag":
+        article = soup.find(article_tag)
+    if tag_type == "id":
+        article = soup.select("#"+article_tag)[0]
+
+    h1 = article.string.strip()
+    md_file = MdUtils(file_name=h1, title=h1)
+    md_file.new_header(level=1, title=h1)
+    md_file.new_header(level=1, title=aitools.translate(h1))
+    md_file.new_line(url)
+
     extract(article, md_file)
 
     md_file.create_md_file()
